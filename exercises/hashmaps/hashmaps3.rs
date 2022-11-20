@@ -14,8 +14,6 @@
 
 // Execute `rustlings hint hashmaps3` or use the `hint` watch subcommand for a hint.
 
-// I AM NOT DONE
-
 use std::collections::HashMap;
 
 // A structure to store team name and its goal details.
@@ -35,11 +33,41 @@ fn build_scores_table(results: String) -> HashMap<String, Team> {
         let team_1_score: u8 = v[2].parse().unwrap();
         let team_2_name = v[1].to_string();
         let team_2_score: u8 = v[3].parse().unwrap();
-        // TODO: Populate the scores table with details extracted from the
+        // Populate the scores table with details extracted from the
         // current line. Keep in mind that goals scored by team_1
         // will be number of goals conceded from team_2, and similarly
         // goals scored by team_2 will be the number of goals conceded by
         // team_1.
+        let team1 = &scores.get(&team_1_name);
+        let team1_prev_score = match team1 {
+            &Option::None => 0,
+            &Option::Some(team) => team.goals_scored
+        };
+        let team1_prev_conceded = match team1 {
+            &Option::None => 0,
+            &Option::Some(team) => team.goals_conceded
+        };
+        let team2 = &scores.get(&team_2_name);
+        let team2_prev_score = match team2 {
+            &Option::None => 0,
+            &Option::Some(team) => team.goals_scored
+        };
+        let team2_prev_conceded = match team2 {
+            &Option::None => 0,
+            &Option::Some(team) => team.goals_conceded
+        };
+        scores.insert(team_1_name.clone(), 
+            Team { 
+                name: team_1_name, 
+                goals_scored: team1_prev_score + team_1_score, 
+                goals_conceded: team1_prev_conceded + team_2_score 
+            });
+        scores.insert(team_2_name.clone(), 
+            Team { 
+                name: team_2_name, 
+                goals_scored: team2_prev_score + team_2_score, 
+                goals_conceded: team2_prev_conceded + team_1_score 
+            });
     }
     scores
 }
